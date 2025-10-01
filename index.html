@@ -444,6 +444,7 @@
               <th class="px-4 py-4 text-right text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">رقم الطالب</th>
               <th class="px-4 py-4 text-right text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">الاسم</th>
               <th class="px-4 py-4 text-right text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">الصف</th>
+              <th class="px-4 py-4 text-right text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">المنطقة</th>
               <th class="px-4 py-4 text-right text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">السنة الدراسية</th>
               <th class="px-4 py-4 text-right text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">الفصل الدراسي</th>
               <th class="px-4 py-4 text-right text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">حالة الدفع</th>
@@ -937,6 +938,7 @@
           <td class="px-4 py-4 whitespace-nowrap text-sm font-bold text-gray-900 dark:text-white">${student.id}</td>
           <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300 font-medium">${student.name}</td>
           <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">${student.class}</td>
+          <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">${student.area || ''}</td>
           <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">${student.academicYear}</td>
           <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">${student.semester}</td>
           <td class="px-4 py-4 whitespace-nowrap">${statusBadge}</td>
@@ -970,7 +972,7 @@
         if (!yearMatch || !semesterMatch) return;
         
         const searchFields = [
-          student.id, student.name, student.class, 
+          student.id, student.name, student.class, student.area,
           student.academicYear, student.semester, student.feesPaid
         ].map(field => (field || '').toString().toLowerCase());
         
@@ -983,6 +985,7 @@
             <td class="px-4 py-4 whitespace-nowrap text-sm font-bold text-gray-900 dark:text-white">${student.id}</td>
             <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300 font-medium">${student.name}</td>
             <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">${student.class}</td>
+            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">${student.area || ''}</td>
             <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">${student.academicYear}</td>
             <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">${student.semester}</td>
             <td class="px-4 py-4 whitespace-nowrap">${statusBadge}</td>
