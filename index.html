@@ -285,6 +285,180 @@
     .success-checkmark {
       animation: fadeIn 0.5s ease-out;
     }
+
+    /* ==================== نمط سند القبض للطباعة ==================== */
+    .receipt-modal {
+      display: none;
+    }
+
+    .receipt-modal.active {
+      display: flex;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .receipt-content {
+      background: white;
+      padding: 40px;
+      border-radius: 15px;
+      max-width: 800px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: slideUp 0.3s ease;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .receipt-header {
+      text-align: center;
+      margin-bottom: 30px;
+      border-bottom: 2px solid #3b82f6;
+      padding-bottom: 20px;
+    }
+
+    .school-logo {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 15px;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 30px;
+    }
+
+    .school-name {
+      font-size: 20px;
+      font-weight: bold;
+      color: #1e293b;
+      margin-bottom: 5px;
+    }
+
+    .receipt-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #3b82f6;
+      margin: 20px 0;
+      text-decoration: underline;
+    }
+
+    .receipt-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 25px;
+      font-size: 14px;
+    }
+
+    .receipt-detail-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .receipt-detail-label {
+      font-weight: 600;
+      color: #64748b;
+    }
+
+    .receipt-detail-value {
+      color: #1e293b;
+      text-align: left;
+    }
+
+    .receipt-students-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 13px;
+    }
+
+    .receipt-students-table th {
+      background: #3b82f6;
+      color: white;
+      padding: 10px;
+      text-align: right;
+      font-weight: 600;
+    }
+
+    .receipt-students-table td {
+      padding: 10px;
+      border-bottom: 1px solid #e2e8f0;
+      text-align: right;
+    }
+
+    .receipt-students-table tbody tr:hover {
+      background: #f0f9ff;
+    }
+
+    .receipt-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 20px 0;
+      padding: 15px;
+      background: #f0f9ff;
+      border-left: 4px solid #3b82f6;
+      border-radius: 5px;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .receipt-signatures {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      margin-top: 50px;
+      padding-top: 30px;
+      border-top: 2px solid #e2e8f0;
+    }
+
+    .receipt-signature-box {
+      text-align: center;
+    }
+
+    .signature-line {
+      border-top: 2px solid #1e293b;
+      margin: 40px 0 5px 0;
+      height: 1px;
+    }
+
+    .signature-title {
+      font-weight: 600;
+      font-size: 13px;
+      color: #64748b;
+    }
+
+    @media print {
+      .receipt-content {
+        max-width: 210mm;
+        max-height: 297mm;
+        padding: 15mm;
+        margin: 0;
+        border-radius: 0;
+        box-shadow: none;
+      }
+
+      .receipt-header {
+        page-break-after: avoid;
+      }
+
+      body {
+        background: white;
+      }
+
+      #login-section, #dashboard-section, .modal, button.close-receipt {
+        display: none !important;
+      }
+    }
   </style>
 </head>
 <body class="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
@@ -639,6 +813,81 @@
   </div>
 </div>
 
+<!-- ==================== سند القبض Modal ==================== -->
+<div id="receiptModal" class="receipt-modal">
+  <div class="receipt-content">
+    <button onclick="closeReceiptModal()" class="close-receipt absolute top-4 left-4 text-gray-400 hover:text-gray-600 text-2xl">✕</button>
+    
+    <div class="receipt-header">
+      <div class="school-logo">🏫</div>
+      <div class="school-name" id="receiptSchoolName">مدرسه الثروات الوطنية الخاصه</div>
+      <div style="font-size: 12px; color: #64748b; margin-bottom: 15px;">سند قبض الرسوم الدراسية</div>
+      <div class="receipt-title">سند قبض</div>
+    </div>
+
+    <div class="receipt-details">
+      <div class="receipt-detail-item">
+        <span class="receipt-detail-label">رقم السند:</span>
+        <span class="receipt-detail-value" id="receiptNumber">-</span>
+      </div>
+      <div class="receipt-detail-item">
+        <span class="receipt-detail-label">التاريخ:</span>
+        <span class="receipt-detail-value" id="receiptDate">-</span>
+      </div>
+      <div class="receipt-detail-item">
+        <span class="receipt-detail-label">السنة الدراسية:</span>
+        <span class="receipt-detail-value" id="receiptAcademicYear">-</span>
+      </div>
+      <div class="receipt-detail-item">
+        <span class="receipt-detail-label">الفصل الدراسي:</span>
+        <span class="receipt-detail-value" id="receiptSemester">-</span>
+      </div>
+    </div>
+
+    <table class="receipt-students-table">
+      <thead>
+        <tr>
+          <th style="width: 50px;">#</th>
+          <th>اسم الطالب</th>
+          <th>الرقم</th>
+          <th>الصف</th>
+          <th style="width: 100px;">المبلغ (د.إ)</th>
+        </tr>
+      </thead>
+      <tbody id="receiptTableBody">
+      </tbody>
+    </table>
+
+    <div class="receipt-total">
+      <span>إجمالي المبلغ:</span>
+      <span id="receiptTotalAmount">0</span>
+    </div>
+
+    <div class="receipt-signatures">
+      <div class="receipt-signature-box">
+        <div class="signature-line"></div>
+        <div class="signature-title">توقيع المحاسبة</div>
+        <div style="font-size: 12px; color: #64748b; margin-top: 5px;">الاسم:</div>
+      </div>
+      <div class="receipt-signature-box">
+        <div class="signature-line"></div>
+        <div class="signature-title">توقيع الخدمات المساندة</div>
+        <div style="font-size: 12px; color: #64748b; margin-top: 5px;">الاسم:</div>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0; font-size: 12px; color: #64748b;">
+      <p>تم إصدار هذا السند بتاريخ <span id="receiptDateTime">-</span></p>
+      <p style="margin-top: 10px;">نموذج رسمي من نماذج المدرسة</p>
+    </div>
+
+    <div style="text-align: center; margin-top: 30px; gap: 10px; display: flex; justify-content: center;">
+      <button onclick="printReceiptModal()" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-sm">🖨️ طباعة</button>
+      <button onclick="closeReceiptModal()" class="px-6 py-2 bg-gray-400 hover:bg-gray-500 text-white rounded-lg font-bold text-sm">إغلاق</button>
+    </div>
+  </div>
+</div>
+
 <script>
   const ITEMS_PER_PAGE = 25;
   let currentPage = 1;
@@ -668,17 +917,18 @@
     transport: { username: "transport", password: "5678", role: "transport", name: "النقل المدرسي" }
   };
 
-  // ==================== التحقق من تكرار رقم الطالب ====================
+  // ==================== التحقق من تكرار رقم الطالب حسب السنة الدراسية ====================
   function checkStudentIdDuplicate() {
     const studentId = document.getElementById('modalStudentId').value.trim();
     const currentKey = document.getElementById('modalStudentKey').value;
+    const academicYear = document.getElementById('modalAcademicYear').value;
     const warningDiv = document.getElementById('duplicate-warning');
     const inputField = document.getElementById('modalStudentId').parentElement;
     const saveBtn = document.getElementById('saveBtn');
     
     hasDuplicateError = false;
 
-    if (!studentId) {
+    if (!studentId || !academicYear) {
       warningDiv.classList.add('hidden');
       inputField.classList.remove('error');
       saveBtn.disabled = false;
@@ -686,10 +936,10 @@
       return;
     }
 
-    // البحث عن نفس الرقم في قاعدة البيانات
+    // البحث عن نفس الرقم في نفس السنة الدراسية
     let duplicate = null;
     for (let student of allStudents) {
-      if (student.id === studentId && student.key !== currentKey) {
+      if (student.id === studentId && student.academicYear === academicYear && student.key !== currentKey) {
         duplicate = student;
         break;
       }
@@ -702,10 +952,10 @@
       const warningHTML = `
         <div class="duplicate-warning">
           <div class="duplicate-warning-title">
-            <span>⚠️</span> تحذير: الطالب موجود بالفعل!
+            <span>⚠️</span> تحذير: الطالب موجود بالفعل في هذه السنة!
           </div>
           <div class="duplicate-warning-content">
-            <p>رقم الطالب <strong>${studentId}</strong> موجود في النظام بالفعل</p>
+            <p>رقم الطالب <strong>${studentId}</strong> موجود في النظام بالفعل للسنة <strong>${academicYear}</strong></p>
             <div class="duplicate-warning-student">
               <strong>الاسم:</strong> ${duplicate.name}<br>
               <strong>الصف:</strong> ${duplicate.class || '-'}<br>
@@ -749,6 +999,50 @@
     }, 3000);
   }
 
+  // ==================== دالة سند القبض ====================
+  function generateReceipt(selectedStudents) {
+    if (!selectedStudents || selectedStudents.length === 0) {
+      showNotification('⚠️ اختر طالب واحد على الأقل', 'warning');
+      return;
+    }
+
+    const receiptNumber = 'SND-' + Date.now();
+    const today = new Date();
+    const totalAmount = selectedStudents.reduce((sum, s) => sum + (parseFloat(s.amount) || 0), 0);
+
+    // ملء بيانات السند
+    document.getElementById('receiptNumber').textContent = receiptNumber;
+    document.getElementById('receiptDate').textContent = today.toLocaleDateString('ar-EG');
+    document.getElementById('receiptAcademicYear').textContent = selectedStudents[0].academicYear || '-';
+    document.getElementById('receiptSemester').textContent = selectedStudents[0].semester || '-';
+    document.getElementById('receiptSchoolName').textContent = localStorage.getItem('schoolName') || ' مدرسة الثروات الوطنية الخاصه';
+    document.getElementById('receiptDateTime').textContent = today.toLocaleString('ar-EG');
+    document.getElementById('receiptTotalAmount').textContent = totalAmount.toLocaleString('ar-EG') + ' د.إ';
+
+    // ملء جدول الطلاب
+    const tableBody = document.getElementById('receiptTableBody');
+    tableBody.innerHTML = selectedStudents.map((s, idx) => `
+      <tr>
+        <td>${idx + 1}</td>
+        <td>${s.name}</td>
+        <td>${s.id}</td>
+        <td>${s.class || '-'}</td>
+        <td style="text-align: left;">${s.amount || '0'}</td>
+      </tr>
+    `).join('');
+
+    // عرض السند
+    document.getElementById('receiptModal').classList.add('active');
+  }
+
+  function closeReceiptModal() {
+    document.getElementById('receiptModal').classList.remove('active');
+  }
+
+  function printReceiptModal() {
+    window.print();
+  }
+
   // تحديث أزرار الإجراءات حسب الدور
   function updateActionButtons() {
     const buttonsContainer = document.getElementById('action-buttons');
@@ -758,6 +1052,7 @@
       // صلاحيات المحاسب
       buttonsHTML = `
         <button onclick="openAddStudentModal()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold transition transform hover:scale-105 text-sm">➕ إضافة طالب</button>
+        <button onclick="generateReceiptForSelected()" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-bold transition transform hover:scale-105 text-sm">📄 سند قبض</button>
         <button onclick="deleteCurrentSemesterData()" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-bold transition transform hover:scale-105 text-sm">🗑️ حذف الفصل</button>
         <button onclick="exportToExcel()" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-bold transition transform hover:scale-105 text-sm">📤 تصدير Excel</button>
         <button onclick="importFromExcel()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold transition transform hover:scale-105 text-sm">📥 استيراد Excel</button>
@@ -775,6 +1070,18 @@
     buttonsHTML += `<button onclick="logout()" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-bold transition transform hover:scale-105 text-sm ml-auto">🚪 خروج</button>`;
     
     buttonsContainer.innerHTML = buttonsHTML;
+  }
+
+  function generateReceiptForSelected() {
+    const checkedBoxes = document.querySelectorAll('input[name="select-student"]:checked');
+    if (checkedBoxes.length === 0) {
+      generateReceipt(filteredStudents);
+    } else {
+      const selected = Array.from(checkedBoxes).map(cb => {
+        return filteredStudents[parseInt(cb.dataset.index)];
+      });
+      generateReceipt(selected);
+    }
   }
 
   function login() {
@@ -1026,7 +1333,7 @@
 
     // التحقق من وجود تكرار
     if (hasDuplicateError) {
-      showNotification('❌ يوجد تكرار لرقم الطالب! يرجى استخدام رقم مختلف', 'error');
+      showNotification('❌ يوجد تكرار لرقم الطالب في هذه السنة! يرجى استخدام رقم مختلف', 'error');
       document.getElementById('modalStudentId').focus();
       return;
     }
@@ -1252,14 +1559,15 @@
           data.forEach(row => {
             const studentId = row['الرقم'] || row['id'] || '';
             const name = row['الاسم'] || row['name'] || '';
+            const academicYear = row['السنة'] || row['academicYear'] || '2024-2025';
 
             // التحقق من أن رقم الطالب والاسم موجودان
             if (!studentId || !name) {
               return;
             }
 
-            // التحقق من عدم تكرار رقم الطالب
-            const isDuplicate = allStudents.some(s => s.id === studentId);
+            // التحقق من عدم تكرار رقم الطالب في نفس السنة
+            const isDuplicate = allStudents.some(s => s.id === studentId && s.academicYear === academicYear);
             if (isDuplicate) {
               duplicateCount++;
               return;
@@ -1273,7 +1581,7 @@
               area: row['المنطقة'] || row['area'] || '',
               paymentDate: row['التاريخ'] || row['paymentDate'] || '',
               amount: row['المبلغ'] || row['amount'] || '',
-              academicYear: row['السنة'] || row['academicYear'] || '2024-2025',
+              academicYear: academicYear,
               semester: row['الفصل'] || row['semester'] || 'الأول',
               feesPaid: (row['الحالة'] || row['feesPaid'] || '').includes('مدفوع') ? 'نعم' : 'لا',
               comment: '',
