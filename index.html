@@ -579,11 +579,11 @@
       </div>
     </div>
 
-    <!-- البحث والفلترة -->
+    <!-- البحث والفلترة السريعة مع فلتر الجهة -->
     <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 mb-8 border-t-2 border-blue-500">
       <h3 class="text-lg font-bold mb-5 flex items-center gap-2">⚡ البحث والفلترة السريعة</h3>
       
-      <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
+      <div class="grid grid-cols-1 md:grid-cols-6 gap-4 mb-4">
         <div class="relative">
           <label class="block text-xs font-bold mb-2 text-gray-700 dark:text-gray-300">🔍 بحث سريع</label>
           <input type="text" id="search" oninput="debounceSearch()" class="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" placeholder="ابحث عن رقم أو اسم...">
@@ -610,6 +610,19 @@
             <option value="الأول" selected>الفصل الأول</option>
             <option value="الثاني">الفصل الثاني</option>
             <option value="الثالث">الفصل الثالث</option>
+          </select>
+        </div>
+
+        <!-- فلتر الجهات -->
+        <div>
+          <label class="block text-xs font-bold mb-2 text-gray-700 dark:text-gray-300">🏢 الجهة</label>
+          <select id="filter-entity" onchange="applyFilters()" class="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 transition font-semibold">
+            <option value="">🏛️ جميع الجهات</option>
+            <option value="مؤسسة أوقاف">مؤسسة أوقاف</option>
+            <option value="إفتاء">إفتاء</option>
+            <option value="شقطري">شقطري</option>
+            <option value="رجال">رجال</option>
+            <option value="جهات أخرى">جهات أخرى</option>
           </select>
         </div>
 
@@ -641,11 +654,15 @@
       
       <div class="table-container">
         <table class="w-full text-sm">
-          <thead class="bg-gradient-to-r from-gray-100 to-gray-50 dark:from-gray-700 dark:to-gray-600 sticky top-0 shadow-sm">
+          <thead class="bg-gradient-to-r from-gray-100 to-gray-50 dark:from-gray-700 dark:to-gray-600 sticky top-0 shadow-sm z-10">
             <tr class="border-b-2 border-gray-300 dark:border-gray-600">
+              <th class="px-3 py-4 text-center font-bold text-gray-700 dark:text-gray-200">
+                <input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)" title="تحديد الكل" class="w-4 h-4 cursor-pointer">
+              </th>
               <th class="px-4 py-4 text-right font-bold text-gray-700 dark:text-gray-200">الرقم</th>
               <th class="px-4 py-4 text-right font-bold text-gray-700 dark:text-gray-200">الاسم</th>
               <th class="px-4 py-4 text-right font-bold text-gray-700 dark:text-gray-200">الصف</th>
+              <th class="px-4 py-4 text-right font-bold text-gray-700 dark:text-gray-200">الجهة</th>
               <th class="px-4 py-4 text-right font-bold text-gray-700 dark:text-gray-200">الهاتف</th>
               <th class="px-4 py-4 text-right font-bold text-gray-700 dark:text-gray-200">المنطقة</th>
               <th class="px-4 py-4 text-right font-bold text-gray-700 dark:text-gray-200">التاريخ</th>
@@ -659,7 +676,7 @@
           </thead>
           <tbody id="students-tbody" class="divide-y divide-gray-200 dark:divide-gray-700">
             <tr class="text-center py-12 text-gray-500">
-              <td colspan="12">
+              <td colspan="14">
                 <div class="flex flex-col items-center gap-2">
                   <div class="animate-spin">⏳</div>
                   <span>جاري تحميل البيانات...</span>
@@ -726,6 +743,18 @@
           <div class="form-group">
             <label class="block text-sm font-bold mb-2 text-gray-700 dark:text-gray-300">الصف</label>
             <input type="text" id="modalStudentClass" class="form-input w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 focus:ring-2 focus:ring-blue-500" placeholder="أدخل الصف">
+          </div>
+
+          <!-- قائمة الجهات المضافة -->
+          <div class="form-group">
+            <label class="block text-sm font-bold mb-2 text-gray-700 dark:text-gray-300">الجهة / التبعية *</label>
+            <select id="modalStudentEntity" class="form-select w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 font-semibold" required>
+              <option value="مؤسسة أوقاف">مؤسسة أوقاف</option>
+              <option value="إفتاء">إفتاء</option>
+              <option value="شقطري">شقطري</option>
+              <option value="رجال">رجال</option>
+              <option value="جهات أخرى" selected>جهات أخرى</option>
+            </select>
           </div>
           
           <div class="form-group">
@@ -850,7 +879,8 @@
           <th style="width: 50px;">#</th>
           <th>اسم الطالب</th>
           <th>الرقم</th>
-          <th>الصف</th>
+          <th>الفصل الدراسي</th>
+          <th>الجهة</th>
           <th style="width: 100px;">المبلغ (د.إ)</th>
         </tr>
       </thead>
@@ -917,7 +947,6 @@
     transport: { username: "transport", password: "5678", role: "transport", name: "النقل المدرسي" }
   };
 
-  // ==================== التحقق من تكرار رقم الطالب حسب السنة الدراسية ====================
   function checkStudentIdDuplicate() {
     const studentId = document.getElementById('modalStudentId').value.trim();
     const currentKey = document.getElementById('modalStudentKey').value;
@@ -936,7 +965,6 @@
       return;
     }
 
-    // البحث عن نفس الرقم في نفس السنة الدراسية
     let duplicate = null;
     for (let student of allStudents) {
       if (student.id === studentId && student.academicYear === academicYear && student.key !== currentKey) {
@@ -959,6 +987,7 @@
             <div class="duplicate-warning-student">
               <strong>الاسم:</strong> ${duplicate.name}<br>
               <strong>الصف:</strong> ${duplicate.class || '-'}<br>
+              <strong>الجهة:</strong> ${duplicate.entity || 'جهات أخرى'}<br>
               <strong>السنة:</strong> ${duplicate.academicYear}<br>
               <strong>الفصل:</strong> ${duplicate.semester}
             </div>
@@ -981,7 +1010,6 @@
     }
   }
 
-  // إشعارات
   function showNotification(msg, type = 'success') {
     const colors = { 
       success: 'from-green-500 to-green-600', 
@@ -999,7 +1027,11 @@
     }, 3000);
   }
 
-  // ==================== دالة سند القبض ====================
+  function toggleSelectAll(master) {
+    const checkboxes = document.querySelectorAll('input[name="select-student"]');
+    checkboxes.forEach(cb => cb.checked = master.checked);
+  }
+
   function generateReceipt(selectedStudents) {
     if (!selectedStudents || selectedStudents.length === 0) {
       showNotification('⚠️ اختر طالب واحد على الأقل', 'warning');
@@ -1010,28 +1042,30 @@
     const today = new Date();
     const totalAmount = selectedStudents.reduce((sum, s) => sum + (parseFloat(s.amount) || 0), 0);
 
-    // ملء بيانات السند
+    const firstStudent = selectedStudents[0];
+    const sameYear = selectedStudents.every(s => s.academicYear === firstStudent.academicYear);
+    const sameSemester = selectedStudents.every(s => s.semester === firstStudent.semester);
+
     document.getElementById('receiptNumber').textContent = receiptNumber;
     document.getElementById('receiptDate').textContent = today.toLocaleDateString('ar-EG');
-    document.getElementById('receiptAcademicYear').textContent = selectedStudents[0].academicYear || '-';
-    document.getElementById('receiptSemester').textContent = selectedStudents[0].semester || '-';
-    document.getElementById('receiptSchoolName').textContent = localStorage.getItem('schoolName') || ' مدرسة الثروات الوطنية الخاصه';
+    document.getElementById('receiptAcademicYear').textContent = sameYear ? (firstStudent.academicYear || '-') : 'متعدد';
+    document.getElementById('receiptSemester').textContent = sameSemester ? (firstStudent.semester || '-') : 'متعدد';
+    document.getElementById('receiptSchoolName').textContent = localStorage.getItem('schoolName') || 'مدرسة الثروات الوطنية الخاصة';
     document.getElementById('receiptDateTime').textContent = today.toLocaleString('ar-EG');
     document.getElementById('receiptTotalAmount').textContent = totalAmount.toLocaleString('ar-EG') + ' د.إ';
 
-    // ملء جدول الطلاب
     const tableBody = document.getElementById('receiptTableBody');
     tableBody.innerHTML = selectedStudents.map((s, idx) => `
       <tr>
         <td>${idx + 1}</td>
         <td>${s.name}</td>
         <td>${s.id}</td>
-        <td>${s.class || '-'}</td>
+        <td>الفصل ${s.semester || '-'} (${s.academicYear || '-'})</td>
+        <td>${s.entity || 'جهات أخرى'}</td>
         <td style="text-align: left;">${s.amount || '0'}</td>
       </tr>
     `).join('');
 
-    // عرض السند
     document.getElementById('receiptModal').classList.add('active');
   }
 
@@ -1043,22 +1077,19 @@
     window.print();
   }
 
-  // تحديث أزرار الإجراءات حسب الدور
   function updateActionButtons() {
     const buttonsContainer = document.getElementById('action-buttons');
     let buttonsHTML = '';
 
     if (currentUserRole === 'accounting') {
-      // صلاحيات المحاسب
       buttonsHTML = `
         <button onclick="openAddStudentModal()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold transition transform hover:scale-105 text-sm">➕ إضافة طالب</button>
-        <button onclick="generateReceiptForSelected()" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-bold transition transform hover:scale-105 text-sm">📄 سند قبض</button>
+        <button onclick="generateReceiptForSelected()" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-bold transition transform hover:scale-105 text-sm">📄 سند قبض للمحددين</button>
         <button onclick="deleteCurrentSemesterData()" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-bold transition transform hover:scale-105 text-sm">🗑️ حذف الفصل</button>
         <button onclick="exportToExcel()" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-bold transition transform hover:scale-105 text-sm">📤 تصدير Excel</button>
         <button onclick="importFromExcel()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold transition transform hover:scale-105 text-sm">📥 استيراد Excel</button>
       `;
     } else if (currentUserRole === 'transport') {
-      // صلاحيات النقل - عرض فقط
       buttonsHTML = `
         <button onclick="exportToExcel()" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-bold transition transform hover:scale-105 text-sm">📤 تصدير Excel</button>
         <div class="px-4 py-2 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 rounded-lg font-bold text-sm flex items-center gap-2">
@@ -1075,13 +1106,12 @@
   function generateReceiptForSelected() {
     const checkedBoxes = document.querySelectorAll('input[name="select-student"]:checked');
     if (checkedBoxes.length === 0) {
-      generateReceipt(filteredStudents);
-    } else {
-      const selected = Array.from(checkedBoxes).map(cb => {
-        return filteredStudents[parseInt(cb.dataset.index)];
-      });
-      generateReceipt(selected);
+      showNotification('⚠️ يرجى تحديد طالب أو عدة طلاب أولاً لطباعة السند', 'warning');
+      return;
     }
+    const selectedKeys = Array.from(checkedBoxes).map(cb => cb.value);
+    const selected = allStudents.filter(s => selectedKeys.includes(s.key));
+    generateReceipt(selected);
   }
 
   function login() {
@@ -1107,7 +1137,6 @@
       localStorage.setItem('loggedInUser', u);
       localStorage.setItem('userRole', foundUser.role);
       
-      // تحديث البيج
       const badge = document.getElementById('user-badge');
       if (foundUser.role === 'accounting') {
         badge.className = 'role-badge badge-accounting text-white';
@@ -1180,6 +1209,7 @@
     document.getElementById('search').value = '';
     document.getElementById('filter-academic-year').value = '2024-2025';
     document.getElementById('filter-semester').value = '';
+    document.getElementById('filter-entity').value = '';
     document.getElementById('filter-status').value = '';
     currentPage = 1;
     updateStatsDisplay();
@@ -1189,20 +1219,22 @@
   function applyFilters() {
     const year = document.getElementById('filter-academic-year').value;
     const sem = document.getElementById('filter-semester').value;
+    const entity = document.getElementById('filter-entity').value;
     const status = document.getElementById('filter-status').value;
     const q = document.getElementById('search').value.toLowerCase().trim();
 
     filteredStudents = allStudents.filter(s => {
       const yearMatch = !year || s.academicYear === year;
       const semMatch = !sem || s.semester === sem;
+      const entityMatch = !entity || (s.entity || 'جهات أخرى') === entity;
       const statusMatch = !status || s.feesPaid === status;
       
-      if (!yearMatch || !semMatch || !statusMatch) return false;
+      if (!yearMatch || !semMatch || !entityMatch || !statusMatch) return false;
       
       if (!q) return true;
       
       const searchableFields = [
-        s.id, s.name, s.class, s.phone, s.area, 
+        s.id, s.name, s.class, s.entity, s.phone, s.area, 
         s.amount, s.feesPaid, s.paymentDate
       ].map(f => (f || '').toString().toLowerCase());
       
@@ -1220,20 +1252,26 @@
     const paged = filteredStudents.slice(start, end);
 
     const tbody = document.getElementById('students-tbody');
+    const selectAllEl = document.getElementById('selectAll');
+    if (selectAllEl) selectAllEl.checked = false;
     
     if (paged.length === 0) {
-      tbody.innerHTML = '<tr class="text-center py-12"><td colspan="12" class="text-gray-500 font-semibold">❌ لا توجد نتائج مطابقة</td></tr>';
+      tbody.innerHTML = '<tr class="text-center py-12"><td colspan="14" class="text-gray-500 font-semibold">❌ لا توجد نتائج مطابقة</td></tr>';
     } else {
-      tbody.innerHTML = paged.map((s, idx) => {
+      tbody.innerHTML = paged.map((s) => {
         const isViewOnly = currentUserRole === 'transport';
         const sourceIcon = s.source === 'accounting' ? '💼' : (s.source === 'transport' ? '🚌' : '📱');
         const sourceName = s.source === 'accounting' ? 'المحاسب' : (s.source === 'transport' ? 'النقل' : 'يدوي');
         
         return `
           <tr class="table-row hover:bg-blue-50 dark:hover:bg-gray-700 transition ${isViewOnly ? 'view-only' : ''}">
+            <td class="px-3 py-4 text-center">
+              <input type="checkbox" name="select-student" value="${s.key}" class="w-4 h-4 cursor-pointer">
+            </td>
             <td class="px-4 py-4 font-bold text-blue-600">${s.id}</td>
             <td class="px-4 py-4 font-semibold">${s.name}</td>
             <td class="px-4 py-4">${s.class || '-'}</td>
+            <td class="px-4 py-4 font-semibold text-purple-600">${s.entity || 'جهات أخرى'}</td>
             <td class="px-4 py-4 font-mono text-sm" dir="ltr">${s.phone ? '+971 ' + s.phone : '-'}</td>
             <td class="px-4 py-4">${s.area || '-'}</td>
             <td class="px-4 py-4 text-gray-600">${s.paymentDate || '-'}</td>
@@ -1301,6 +1339,7 @@
     document.getElementById('modalTitle').textContent = 'إضافة طالب جديد';
     document.getElementById('modalIcon').textContent = '➕';
     document.getElementById('studentForm').reset();
+    document.getElementById('modalStudentEntity').value = 'جهات أخرى';
     document.getElementById('modalStudentKey').value = '';
     document.getElementById('duplicate-warning').classList.add('hidden');
     document.getElementById('modalStudentId').parentElement.classList.remove('error');
@@ -1331,7 +1370,6 @@
       return;
     }
 
-    // التحقق من وجود تكرار
     if (hasDuplicateError) {
       showNotification('❌ يوجد تكرار لرقم الطالب في هذه السنة! يرجى استخدام رقم مختلف', 'error');
       document.getElementById('modalStudentId').focus();
@@ -1350,6 +1388,7 @@
       id: id,
       name: name,
       class: document.getElementById('modalStudentClass').value.trim(),
+      entity: document.getElementById('modalStudentEntity').value,
       phone: document.getElementById('modalStudentPhone').value.trim(),
       area: document.getElementById('modalStudentArea').value.trim(),
       paymentDate: document.getElementById('modalPaymentDate').value,
@@ -1410,6 +1449,7 @@
       document.getElementById('modalStudentId').value = s.id || '';
       document.getElementById('modalStudentName').value = s.name || '';
       document.getElementById('modalStudentClass').value = s.class || '';
+      document.getElementById('modalStudentEntity').value = s.entity || 'جهات أخرى';
       document.getElementById('modalStudentPhone').value = s.phone || '';
       document.getElementById('modalStudentArea').value = s.area || '';
       document.getElementById('modalPaymentDate').value = s.paymentDate || '';
@@ -1490,6 +1530,7 @@
         s.key = child.key;
         if (!s.academicYear) s.academicYear = '2024-2025';
         if (!s.source) s.source = 'accounting';
+        if (!s.entity) s.entity = 'جهات أخرى';
         allStudents.push(s);
       });
       
@@ -1510,6 +1551,7 @@
       'الرقم': s.id,
       'الاسم': s.name,
       'الصف': s.class,
+      'الجهة': s.entity || 'جهات أخرى',
       'الهاتف': s.phone,
       'المنطقة': s.area,
       'التاريخ': s.paymentDate,
@@ -1561,12 +1603,8 @@
             const name = row['الاسم'] || row['name'] || '';
             const academicYear = row['السنة'] || row['academicYear'] || '2024-2025';
 
-            // التحقق من أن رقم الطالب والاسم موجودان
-            if (!studentId || !name) {
-              return;
-            }
+            if (!studentId || !name) return;
 
-            // التحقق من عدم تكرار رقم الطالب في نفس السنة
             const isDuplicate = allStudents.some(s => s.id === studentId && s.academicYear === academicYear);
             if (isDuplicate) {
               duplicateCount++;
@@ -1577,6 +1615,7 @@
               id: studentId,
               name: name,
               class: row['الصف'] || row['class'] || '',
+              entity: row['الجهة'] || row['entity'] || 'جهات أخرى',
               phone: row['الهاتف'] || row['phone'] || '',
               area: row['المنطقة'] || row['area'] || '',
               paymentDate: row['التاريخ'] || row['paymentDate'] || '',
@@ -1623,7 +1662,6 @@
       currentUser = user;
       currentUserRole = role;
       
-      // تحديث البيج
       const badge = document.getElementById('user-badge');
       for (let key in users) {
         if (users[key].username === user) {
@@ -1645,14 +1683,12 @@
     }
   });
 
-  // Auto-refresh
   setInterval(() => {
     if (localStorage.getItem('loggedInUser')) {
       updateTable();
     }
   }, 30000);
 
-  // Modal close handlers
   document.getElementById('studentModal').addEventListener('click', (e) => {
     if (e.target.id === 'studentModal') {
       closeAddStudentModal();
