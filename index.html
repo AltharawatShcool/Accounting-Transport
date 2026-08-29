@@ -117,18 +117,10 @@
       transform: translateY(-2px);
     }
 
-    .form-group.error input {
+    .form-group.error input, .form-group.error select {
       border-color: #ef4444 !important;
       background-color: rgba(239, 68, 68, 0.05);
       animation: shake 0.4s ease-in-out;
-    }
-
-    .form-group.error .error-message {
-      display: block;
-      color: #dc2626;
-      font-size: 0.875rem;
-      margin-top: 0.5rem;
-      animation: fadeIn 0.3s ease;
     }
 
     .form-input, .form-select, .form-textarea {
@@ -139,10 +131,6 @@
     .form-input:focus, .form-select:focus, .form-textarea:focus {
       box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 0 0 1px rgba(59, 130, 246, 0.5);
       transform: translateY(-2px);
-    }
-
-    .form-input.error:focus {
-      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1), 0 0 0 1px rgba(239, 68, 68, 0.5);
     }
 
     .btn-submit {
@@ -229,11 +217,11 @@
     }
 
     .duplicate-warning-student {
-      background: rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.4);
       padding: 0.5rem;
       border-radius: 0.5rem;
       margin-top: 0.5rem;
-      font-family: monospace;
+      font-family: inherit;
     }
     
     button { transition: all 0.3s ease; }
@@ -246,22 +234,13 @@
     
     tbody tr:hover {
       background-color: rgba(59, 130, 246, 0.05);
-      transform: scale(1.01);
+      transform: scale(1.002);
     }
     
     @media (max-width: 768px) {
-      .table-container {
-        max-height: 600px;
-      }
-
-      .modal-content {
-        max-width: 95vw;
-        max-height: 95vh;
-      }
-
-      .modal-header {
-        flex-wrap: wrap;
-      }
+      .table-container { max-height: 600px; }
+      .modal-content { max-width: 95vw; max-height: 95vh; }
+      .modal-header { flex-wrap: wrap; }
     }
 
     .role-badge {
@@ -278,19 +257,10 @@
       pointer-events: none !important;
     }
 
-    .view-only {
-      opacity: 0.7;
-    }
-
-    .success-checkmark {
-      animation: fadeIn 0.5s ease-out;
-    }
+    .view-only { opacity: 0.7; }
 
     /* ==================== نمط سند القبض للطباعة ==================== */
-    .receipt-modal {
-      display: none;
-    }
-
+    .receipt-modal { display: none; }
     .receipt-modal.active {
       display: flex;
       position: fixed;
@@ -395,10 +365,6 @@
       text-align: right;
     }
 
-    .receipt-students-table tbody tr:hover {
-      background: #f0f9ff;
-    }
-
     .receipt-total {
       display: flex;
       justify-content: space-between;
@@ -421,16 +387,12 @@
       border-top: 2px solid #e2e8f0;
     }
 
-    .receipt-signature-box {
-      text-align: center;
-    }
-
+    .receipt-signature-box { text-align: center; }
     .signature-line {
       border-top: 2px solid #1e293b;
       margin: 40px 0 5px 0;
       height: 1px;
     }
-
     .signature-title {
       font-weight: 600;
       font-size: 13px;
@@ -446,15 +408,8 @@
         border-radius: 0;
         box-shadow: none;
       }
-
-      .receipt-header {
-        page-break-after: avoid;
-      }
-
-      body {
-        background: white;
-      }
-
+      .receipt-header { page-break-after: avoid; }
+      body { background: white; }
       #login-section, #dashboard-section, .modal, button.close-receipt {
         display: none !important;
       }
@@ -579,7 +534,7 @@
       </div>
     </div>
 
-    <!-- البحث والفلترة السريعة مع فلتر الجهة -->
+    <!-- البحث والفلترة -->
     <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 mb-8 border-t-2 border-blue-500">
       <h3 class="text-lg font-bold mb-5 flex items-center gap-2">⚡ البحث والفلترة السريعة</h3>
       
@@ -613,7 +568,6 @@
           </select>
         </div>
 
-        <!-- فلتر الجهات -->
         <div>
           <label class="block text-xs font-bold mb-2 text-gray-700 dark:text-gray-300">🏢 الجهة</label>
           <select id="filter-entity" onchange="applyFilters()" class="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 transition font-semibold">
@@ -732,7 +686,6 @@
           <div class="form-group">
             <label class="block text-sm font-bold mb-2 text-gray-700 dark:text-gray-300">رقم الطالب *</label>
             <input type="text" id="modalStudentId" class="form-input w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 focus:ring-2 focus:ring-blue-500" placeholder="أدخل رقم الطالب" oninput="checkStudentIdDuplicate()" required>
-            <span class="error-message" style="display: none;"></span>
           </div>
           
           <div class="form-group">
@@ -745,7 +698,6 @@
             <input type="text" id="modalStudentClass" class="form-input w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 focus:ring-2 focus:ring-blue-500" placeholder="أدخل الصف">
           </div>
 
-          <!-- قائمة الجهات المضافة -->
           <div class="form-group">
             <label class="block text-sm font-bold mb-2 text-gray-700 dark:text-gray-300">الجهة / التبعية *</label>
             <select id="modalStudentEntity" class="form-select w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 font-semibold" required>
@@ -770,6 +722,33 @@
       </div>
 
       <div class="border-t pt-6">
+        <h3 class="text-lg font-bold mb-4 text-purple-600 dark:text-purple-400 flex items-center gap-2">
+          <span>📚</span> البيانات الدراسية
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div class="form-group">
+            <label class="block text-sm font-bold mb-2 text-gray-700 dark:text-gray-300">السنة الدراسية *</label>
+            <select id="modalAcademicYear" onchange="checkStudentIdDuplicate()" class="form-select w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 font-semibold" required>
+              <option value="2024-2025" selected>2024-2025</option>
+              <option value="2025-2026">2025-2026</option>
+              <option value="2026-2027">2026-2027</option>
+              <option value="2027-2028">2027-2028</option>
+              <option value="2028-2029">2028-2029</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label class="block text-sm font-bold mb-2 text-gray-700 dark:text-gray-300">الفصل الدراسي *</label>
+            <select id="modalSemester" onchange="checkStudentIdDuplicate()" class="form-select w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 font-semibold" required>
+              <option value="الأول" selected>الفصل الأول</option>
+              <option value="الثاني">الفصل الثاني</option>
+              <option value="الثالث">الفصل الثالث</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="border-t pt-6">
         <h3 class="text-lg font-bold mb-4 text-green-600 dark:text-green-400 flex items-center gap-2">
           <span>💰</span> معلومات الدفع
         </h3>
@@ -786,36 +765,9 @@
           
           <div class="form-group">
             <label class="block text-sm font-bold mb-2 text-gray-700 dark:text-gray-300">حالة الدفع *</label>
-            <select id="modalFeesPaid" class="form-select w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 focus:ring-2 focus:ring-blue-500" required>
+            <select id="modalFeesPaid" class="form-select w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 font-semibold" required>
               <option value="نعم">✅ مدفوع</option>
               <option value="لا">⏳ غير مدفوع</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <div class="border-t pt-6">
-        <h3 class="text-lg font-bold mb-4 text-purple-600 dark:text-purple-400 flex items-center gap-2">
-          <span>📚</span> البيانات الدراسية
-        </h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div class="form-group">
-            <label class="block text-sm font-bold mb-2 text-gray-700 dark:text-gray-300">السنة الدراسية *</label>
-            <select id="modalAcademicYear" class="form-select w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 focus:ring-2 focus:ring-blue-500" required>
-              <option value="2024-2025" selected>2024-2025</option>
-              <option value="2025-2026">2025-2026</option>
-              <option value="2026-2027">2026-2027</option>
-              <option value="2027-2028">2027-2028</option>
-              <option value="2028-2029">2028-2029</option>
-            </select>
-          </div>
-          
-          <div class="form-group">
-            <label class="block text-sm font-bold mb-2 text-gray-700 dark:text-gray-300">الفصل الدراسي *</label>
-            <select id="modalSemester" class="form-select w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 focus:ring-2 focus:ring-blue-500" required>
-              <option value="الأول" selected>الفصل الأول</option>
-              <option value="الثاني">الفصل الثاني</option>
-              <option value="الثالث">الفصل الثالث</option>
             </select>
           </div>
         </div>
@@ -826,7 +778,7 @@
           <span>📝</span> ملاحظات إضافية
         </h3>
         <div class="form-group">
-          <textarea id="modalComment" class="form-textarea w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 focus:ring-2 focus:ring-blue-500" placeholder="أضف أي ملاحظات إضافية هنا" rows="4"></textarea>
+          <textarea id="modalComment" class="form-textarea w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 focus:ring-2 focus:ring-blue-500" placeholder="أضف أي ملاحظات إضافية هنا" rows="3"></textarea>
         </div>
       </div>
     </form>
@@ -838,6 +790,57 @@
       <button type="button" onclick="saveStudent()" class="btn-submit px-8 py-3 text-white rounded-lg font-bold transition" id="saveBtn">
         💾 حفظ البيانات
       </button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== Modal ترحيل الطلاب ==================== -->
+<div id="transferModal" class="modal fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+  <div class="modal-content bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg p-6">
+    <div class="modal-header px-4 py-3 rounded-xl flex justify-between items-center mb-6">
+      <h3 class="text-xl font-bold text-white flex items-center gap-2">
+        <span>🔄</span> ترحيل الطلاب المحددين
+      </h3>
+      <button onclick="closeTransferModal()" class="modal-close-btn text-white">✕</button>
+    </div>
+
+    <div class="space-y-4">
+      <p class="text-sm text-gray-600 dark:text-gray-300 font-semibold">
+        سيتم نسخ بيانات الطلاب المحددين (<span id="transfer-count" class="text-blue-600 font-bold">0</span> طالب) ونقلهم إلى الفصل الدراسي الجديد تلقائياً دون تكرار.
+      </p>
+
+      <div class="form-group">
+        <label class="block text-sm font-bold mb-2">📅 ترحيل إلى السنة الدراسية:</label>
+        <select id="transfer-target-year" class="form-select w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 font-semibold">
+          <option value="2024-2025">2024-2025</option>
+          <option value="2025-2026" selected>2025-2026</option>
+          <option value="2026-2027">2026-2027</option>
+          <option value="2027-2028">2027-2028</option>
+          <option value="2028-2029">2028-2029</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="block text-sm font-bold mb-2">📗 ترحيل إلى الفصل الدراسي:</label>
+        <select id="transfer-target-semester" class="form-select w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 font-semibold">
+          <option value="الأول">الفصل الأول</option>
+          <option value="الثاني" selected>الفصل الثاني</option>
+          <option value="الثالث">الفصل الثالث</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="block text-sm font-bold mb-2">💳 حالة الدفع المبدئية في الفصل الجديد:</label>
+        <select id="transfer-target-fees" class="form-select w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 font-semibold">
+          <option value="لا" selected>⏳ معلق (غير مدفوع)</option>
+          <option value="نعم">✅ مدفوع</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="flex gap-3 justify-end mt-8 border-t pt-4">
+      <button type="button" onclick="closeTransferModal()" class="px-5 py-2.5 bg-gray-400 hover:bg-gray-500 text-white rounded-lg font-bold">إلغاء</button>
+      <button type="button" onclick="executeTransfer()" class="px-6 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-bold">بدء الترحيل 🚀</button>
     </div>
   </div>
 </div>
@@ -884,8 +887,7 @@
           <th style="width: 100px;">المبلغ (د.إ)</th>
         </tr>
       </thead>
-      <tbody id="receiptTableBody">
-      </tbody>
+      <tbody id="receiptTableBody"></tbody>
     </table>
 
     <div class="receipt-total">
@@ -947,17 +949,19 @@
     transport: { username: "transport", password: "5678", role: "transport", name: "النقل المدرسي" }
   };
 
+  // ==================== فحص ومنع تكرار الطالب حسب (السنة + الفصل الدراسي) ====================
   function checkStudentIdDuplicate() {
     const studentId = document.getElementById('modalStudentId').value.trim();
     const currentKey = document.getElementById('modalStudentKey').value;
     const academicYear = document.getElementById('modalAcademicYear').value;
+    const semester = document.getElementById('modalSemester').value;
     const warningDiv = document.getElementById('duplicate-warning');
     const inputField = document.getElementById('modalStudentId').parentElement;
     const saveBtn = document.getElementById('saveBtn');
     
     hasDuplicateError = false;
 
-    if (!studentId || !academicYear) {
+    if (!studentId || !academicYear || !semester) {
       warningDiv.classList.add('hidden');
       inputField.classList.remove('error');
       saveBtn.disabled = false;
@@ -965,9 +969,13 @@
       return;
     }
 
+    // فحص التطابق مع رقم الطالب ونفس السنة والفصل الدراسي
     let duplicate = null;
     for (let student of allStudents) {
-      if (student.id === studentId && student.academicYear === academicYear && student.key !== currentKey) {
+      if (student.id === studentId && 
+          student.academicYear === academicYear && 
+          student.semester === semester && 
+          student.key !== currentKey) {
         duplicate = student;
         break;
       }
@@ -980,25 +988,23 @@
       const warningHTML = `
         <div class="duplicate-warning">
           <div class="duplicate-warning-title">
-            <span>⚠️</span> تحذير: الطالب موجود بالفعل في هذه السنة!
+            <span>⚠️</span> تنبيه: الطالب مسجل بالفعل في هذا الفصل الدراسي!
           </div>
           <div class="duplicate-warning-content">
-            <p>رقم الطالب <strong>${studentId}</strong> موجود في النظام بالفعل للسنة <strong>${academicYear}</strong></p>
+            <p>رقم الطالب <strong>${studentId}</strong> مسجل بالفعل في <strong>الفصل ${semester}</strong> لسنة <strong>${academicYear}</strong></p>
             <div class="duplicate-warning-student">
               <strong>الاسم:</strong> ${duplicate.name}<br>
               <strong>الصف:</strong> ${duplicate.class || '-'}<br>
               <strong>الجهة:</strong> ${duplicate.entity || 'جهات أخرى'}<br>
-              <strong>السنة:</strong> ${duplicate.academicYear}<br>
-              <strong>الفصل:</strong> ${duplicate.semester}
+              <strong>حالة الرسوم:</strong> ${duplicate.feesPaid === 'نعم' ? 'مدفوع' : 'معلق'}
             </div>
-            <p style="margin-top: 0.5rem; color: #78350f;">يرجى استخدام رقم طالب مختلف أو تعديل البيانات الموجودة</p>
+            <p style="margin-top: 0.5rem; font-weight: bold; color: #92400e;">💡 يمكنك تعديل بياناته من الجدول مباشرة، أو استخدام ميزة "ترحيل الطلاب" لنقله لفصل آخر.</p>
           </div>
         </div>
       `;
       
       warningDiv.innerHTML = warningHTML;
       warningDiv.classList.remove('hidden');
-      
       saveBtn.disabled = true;
       saveBtn.classList.add('disabled-btn');
     } else {
@@ -1032,6 +1038,101 @@
     checkboxes.forEach(cb => cb.checked = master.checked);
   }
 
+  // ==================== وظيفة ترحيل الطلاب ====================
+  function openTransferModal() {
+    if (currentUserRole !== 'accounting') {
+      showNotification('⛔ ليس لديك صلاحية لترحيل الطلاب', 'error');
+      return;
+    }
+
+    const checkedBoxes = document.querySelectorAll('input[name="select-student"]:checked');
+    if (checkedBoxes.length === 0) {
+      showNotification('⚠️ الرجاء تحديد طالب أو أكثر من الجدول للترحيل', 'warning');
+      return;
+    }
+
+    document.getElementById('transfer-count').textContent = checkedBoxes.length;
+    document.getElementById('transferModal').classList.add('active');
+  }
+
+  function closeTransferModal() {
+    document.getElementById('transferModal').classList.remove('active');
+  }
+
+  function executeTransfer() {
+    const checkedBoxes = document.querySelectorAll('input[name="select-student"]:checked');
+    if (checkedBoxes.length === 0) return;
+
+    const targetYear = document.getElementById('transfer-target-year').value;
+    const targetSemester = document.getElementById('transfer-target-semester').value;
+    const targetFees = document.getElementById('transfer-target-fees').value;
+
+    const selectedKeys = Array.from(checkedBoxes).map(cb => cb.value);
+    const selected = allStudents.filter(s => selectedKeys.includes(s.key));
+
+    document.getElementById('loading-indicator').classList.remove('hidden');
+
+    let transferredCount = 0;
+    let skippedDuplicates = 0;
+    const promises = [];
+
+    selected.forEach(s => {
+      // فحص هل الطالب موجود مسبقاً في الفصل المستهدف
+      const isAlreadyInTarget = allStudents.some(existing => 
+        existing.id === s.id && 
+        existing.academicYear === targetYear && 
+        existing.semester === targetSemester
+      );
+
+      if (isAlreadyInTarget) {
+        skippedDuplicates++;
+      } else {
+        const newStudentEntry = {
+          id: s.id,
+          name: s.name,
+          class: s.class || '',
+          entity: s.entity || 'جهات أخرى',
+          phone: s.phone || '',
+          area: s.area || '',
+          paymentDate: targetFees === 'نعم' ? new Date().toISOString().split('T')[0] : '',
+          amount: s.amount || '',
+          academicYear: targetYear,
+          semester: targetSemester,
+          feesPaid: targetFees,
+          comment: `تم الترحيل من فصل (${s.semester} - ${s.academicYear})`,
+          source: 'accounting',
+          createdAt: new Date().toISOString(),
+          createdBy: currentUser
+        };
+
+        promises.push(firebase.database().ref('students').push(newStudentEntry));
+        transferredCount++;
+      }
+    });
+
+    Promise.all(promises).then(() => {
+      document.getElementById('loading-indicator').classList.add('hidden');
+      closeTransferModal();
+
+      if (transferredCount > 0) {
+        showNotification(`✅ تم ترحيل ${transferredCount} طالب إلى (الفصل ${targetSemester} - ${targetYear}) بنجاح!`, 'success');
+      }
+      if (skippedDuplicates > 0) {
+        showNotification(`⚠️ تم تخطي ${skippedDuplicates} طالب لوجودهم مسبقاً في الفصل المستهدف`, 'warning');
+      }
+
+      // الانتقال لعرض الفصل الذي تم الترحيل إليه
+      document.getElementById('filter-academic-year').value = targetYear;
+      document.getElementById('filter-semester').value = targetSemester;
+      updateTable();
+    }).catch(err => {
+      document.getElementById('loading-indicator').classList.add('hidden');
+      showNotification('❌ حدث خطأ أثناء الترحيل', 'error');
+      console.error(err);
+    });
+  }
+
+  // ==================== سند القبض ====================
   function generateReceipt(selectedStudents) {
     if (!selectedStudents || selectedStudents.length === 0) {
       showNotification('⚠️ اختر طالب واحد على الأقل', 'warning');
@@ -1073,9 +1174,7 @@
     document.getElementById('receiptModal').classList.remove('active');
   }
 
-  function printReceiptModal() {
-    window.print();
-  }
+  function printReceiptModal() { window.print(); }
 
   function updateActionButtons() {
     const buttonsContainer = document.getElementById('action-buttons');
@@ -1084,7 +1183,8 @@
     if (currentUserRole === 'accounting') {
       buttonsHTML = `
         <button onclick="openAddStudentModal()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold transition transform hover:scale-105 text-sm">➕ إضافة طالب</button>
-        <button onclick="generateReceiptForSelected()" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-bold transition transform hover:scale-105 text-sm">📄 سند قبض للمحددين</button>
+        <button onclick="openTransferModal()" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-bold transition transform hover:scale-105 text-sm">🔄 ترحيل المحددين</button>
+        <button onclick="generateReceiptForSelected()" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-bold transition transform hover:scale-105 text-sm">📄 سند قبض</button>
         <button onclick="deleteCurrentSemesterData()" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-bold transition transform hover:scale-105 text-sm">🗑️ حذف الفصل</button>
         <button onclick="exportToExcel()" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-bold transition transform hover:scale-105 text-sm">📤 تصدير Excel</button>
         <button onclick="importFromExcel()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold transition transform hover:scale-105 text-sm">📥 استيراد Excel</button>
@@ -1099,7 +1199,6 @@
     }
 
     buttonsHTML += `<button onclick="logout()" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-bold transition transform hover:scale-105 text-sm ml-auto">🚪 خروج</button>`;
-    
     buttonsContainer.innerHTML = buttonsHTML;
   }
 
@@ -1230,7 +1329,6 @@
       const statusMatch = !status || s.feesPaid === status;
       
       if (!yearMatch || !semMatch || !entityMatch || !statusMatch) return false;
-      
       if (!q) return true;
       
       const searchableFields = [
@@ -1371,7 +1469,7 @@
     }
 
     if (hasDuplicateError) {
-      showNotification('❌ يوجد تكرار لرقم الطالب في هذه السنة! يرجى استخدام رقم مختلف', 'error');
+      showNotification('❌ هذا الطالب مسجل بالفعل في هذا الفصل الدراسي! يرجى اختيار فصل آخر أو تعديل البيانات', 'error');
       document.getElementById('modalStudentId').focus();
       return;
     }
@@ -1407,7 +1505,7 @@
     if (currentEditingKey) {
       firebase.database().ref(`students/${currentEditingKey}`).update(student).then(() => {
         document.getElementById('loading-indicator').classList.add('hidden');
-        showNotification('✅ تم تحديث الطالب بنجاح');
+        showNotification('✅ تم تحديث بيانات الطالب بنجاح');
         closeAddStudentModal();
         updateTable();
       }).catch(err => {
@@ -1535,7 +1633,6 @@
       });
       
       allStudents.sort((a, b) => new Date(b.paymentDate) - new Date(a.paymentDate));
-      
       applyFilters();
       document.getElementById('loading-indicator').classList.add('hidden');
     });
@@ -1602,10 +1699,12 @@
             const studentId = row['الرقم'] || row['id'] || '';
             const name = row['الاسم'] || row['name'] || '';
             const academicYear = row['السنة'] || row['academicYear'] || '2024-2025';
+            const semester = row['الفصل'] || row['semester'] || 'الأول';
 
             if (!studentId || !name) return;
 
-            const isDuplicate = allStudents.some(s => s.id === studentId && s.academicYear === academicYear);
+            // التحقق من تكرار الطالب داخل نفس (السنة والفصل)
+            const isDuplicate = allStudents.some(s => s.id === studentId && s.academicYear === academicYear && s.semester === semester);
             if (isDuplicate) {
               duplicateCount++;
               return;
@@ -1621,7 +1720,7 @@
               paymentDate: row['التاريخ'] || row['paymentDate'] || '',
               amount: row['المبلغ'] || row['amount'] || '',
               academicYear: academicYear,
-              semester: row['الفصل'] || row['semester'] || 'الأول',
+              semester: semester,
               feesPaid: (row['الحالة'] || row['feesPaid'] || '').includes('مدفوع') ? 'نعم' : 'لا',
               comment: '',
               source: 'accounting',
@@ -1636,7 +1735,7 @@
           setTimeout(() => {
             document.getElementById('loading-indicator').classList.add('hidden');
             if (duplicateCount > 0) {
-              showNotification(`📥 تم استيراد ${count} طالب بنجاح (تم تخطي ${duplicateCount} أرقام مكررة)`, 'warning');
+              showNotification(`📥 تم استيراد ${count} طالب بنجاح (تم تخطي ${duplicateCount} مكرر في نفس الفصل)`, 'warning');
             } else {
               showNotification(`📥 تم استيراد ${count} طالب بنجاح`, 'success');
             }
@@ -1690,14 +1789,17 @@
   }, 30000);
 
   document.getElementById('studentModal').addEventListener('click', (e) => {
-    if (e.target.id === 'studentModal') {
-      closeAddStudentModal();
-    }
+    if (e.target.id === 'studentModal') closeAddStudentModal();
+  });
+
+  document.getElementById('transferModal').addEventListener('click', (e) => {
+    if (e.target.id === 'transferModal') closeTransferModal();
   });
 
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && document.getElementById('studentModal').classList.contains('active')) {
-      closeAddStudentModal();
+    if (e.key === 'Escape') {
+      if (document.getElementById('studentModal').classList.contains('active')) closeAddStudentModal();
+      if (document.getElementById('transferModal').classList.contains('active')) closeTransferModal();
     }
   });
 </script>
