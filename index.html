@@ -418,7 +418,7 @@
 </head>
 <body class="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
 
-<!-- Header احترافي مع عرض الدور -->
+<!-- Header -->
 <header class="bg-white dark:bg-gray-800 shadow-xl sticky top-0 z-40 animate-slide border-b-4 border-blue-500">
   <div class="container mx-auto px-4 py-6">
     <div class="flex items-center justify-between flex-wrap gap-4">
@@ -594,9 +594,7 @@
         </div>
       </div>
 
-      <div class="flex gap-2 flex-wrap" id="action-buttons">
-        <!-- الأزرار تتغير حسب الدور -->
-      </div>
+      <div class="flex gap-2 flex-wrap" id="action-buttons"></div>
     </div>
 
     <!-- Students Table -->
@@ -794,7 +792,7 @@
   </div>
 </div>
 
-<!-- ==================== Modal ترحيل الطلاب ==================== -->
+<!-- Modal ترحيل الطلاب -->
 <div id="transferModal" class="modal fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
   <div class="modal-content bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg p-6">
     <div class="modal-header px-4 py-3 rounded-xl flex justify-between items-center mb-6">
@@ -845,7 +843,7 @@
   </div>
 </div>
 
-<!-- ==================== سند القبض Modal ==================== -->
+<!-- سند القبض Modal -->
 <div id="receiptModal" class="receipt-modal">
   <div class="receipt-content">
     <button onclick="closeReceiptModal()" class="close-receipt absolute top-4 left-4 text-gray-400 hover:text-gray-600 text-2xl">✕</button>
@@ -949,7 +947,28 @@
     transport: { username: "transport", password: "5678", role: "transport", name: "النقل المدرسي" }
   };
 
-  // ==================== فحص ومنع تكرار الطالب حسب (السنة + الفصل الدراسي) ====================
+  // ==================== تحديث قاعدة البيانات تلقائياً: شقطري -> سقطري ====================
+  function migrateShoqotriToSoqotri() {
+    db.ref('students').once('value').then(snap => {
+      const updates = {};
+      let count = 0;
+      snap.forEach(child => {
+        const student = child.val();
+        if (student && student.entity === 'شقطري') {
+          updates[`students/${child.key}/entity`] = 'سقطري';
+          count++;
+        }
+      });
+      if (count > 0) {
+        db.ref().update(updates).then(() => {
+          showNotification(`🔄 تم تحديث ${count} سجل من (شقطري) إلى (سقطري) في قاعدة البيانات`, 'info');
+          updateTable();
+        });
+      }
+    });
+  }
+
+  // ==================== فحص ومنع تكرار الطالب ====================
   function checkStudentIdDuplicate() {
     const studentId = document.getElementById('modalStudentId').value.trim();
     const currentKey = document.getElementById('modalStudentKey').value;
@@ -969,7 +988,6 @@
       return;
     }
 
-    // فحص التطابق مع رقم الطالب ونفس السنة والفصل الدراسي
     let duplicate = null;
     for (let student of allStudents) {
       if (student.id === studentId && 
@@ -1038,7 +1056,6 @@
     checkboxes.forEach(cb => cb.checked = master.checked);
   }
 
-  // ==================== وظيفة ترحيل الطلاب ====================
   function openTransferModal() {
     if (currentUserRole !== 'accounting') {
       showNotification('⛔ ليس لديك صلاحية لترحيل الطلاب', 'error');
@@ -1077,7 +1094,6 @@
     const promises = [];
 
     selected.forEach(s => {
-      // فحص هل الطالب موجود مسبقاً في الفصل المستهدف
       const isAlreadyInTarget = allStudents.some(existing => 
         existing.id === s.id && 
         existing.academicYear === targetYear && 
@@ -1091,7 +1107,7 @@
           id: s.id,
           name: s.name,
           class: s.class || '',
-          entity: s.entity || 'جهات أخرى',
+          entity: (s.entity === 'شقطري' ? 'سقطري' : s.entity) || 'جهات أخرى',
           phone: s.phone || '',
           area: s.area || '',
           paymentDate: targetFees === 'نعم' ? new Date().toISOString().split('T')[0] : '',
@@ -1121,7 +1137,6 @@
         showNotification(`⚠️ تم تخطي ${skippedDuplicates} طالب لوجودهم مسبقاً في الفصل المستهدف`, 'warning');
       }
 
-      // الانتقال لعرض الفصل الذي تم الترحيل إليه
       document.getElementById('filter-academic-year').value = targetYear;
       document.getElementById('filter-semester').value = targetSemester;
       updateTable();
@@ -1132,7 +1147,6 @@
     });
   }
 
-  // ==================== سند القبض ====================
   function generateReceipt(selectedStudents) {
     if (!selectedStudents || selectedStudents.length === 0) {
       showNotification('⚠️ اختر طالب واحد على الأقل', 'warning');
@@ -1248,6 +1262,7 @@
       document.getElementById('login-section').classList.add('hidden');
       document.getElementById('dashboard-section').classList.remove('hidden');
       updateActionButtons();
+      migrateShoqotriToSoqotri();
       updateTable();
       showNotification(`✅ تم الدخول بنجاح كـ ${foundUser.name} 👋`);
     } else {
@@ -1482,11 +1497,14 @@
       return;
     }
 
+    let selectedEntity = document.getElementById('modalStudentEntity').value;
+    if (selectedEntity === 'شقطري') selectedEntity = 'سقطري';
+
     const student = {
       id: id,
       name: name,
       class: document.getElementById('modalStudentClass').value.trim(),
-      entity: document.getElementById('modalStudentEntity').value,
+      entity: selectedEntity,
       phone: document.getElementById('modalStudentPhone').value.trim(),
       area: document.getElementById('modalStudentArea').value.trim(),
       paymentDate: document.getElementById('modalPaymentDate').value,
@@ -1547,7 +1565,11 @@
       document.getElementById('modalStudentId').value = s.id || '';
       document.getElementById('modalStudentName').value = s.name || '';
       document.getElementById('modalStudentClass').value = s.class || '';
-      document.getElementById('modalStudentEntity').value = s.entity || 'جهات أخرى';
+      
+      let ent = s.entity || 'جهات أخرى';
+      if (ent === 'شقطري') ent = 'سقطري';
+      document.getElementById('modalStudentEntity').value = ent;
+
       document.getElementById('modalStudentPhone').value = s.phone || '';
       document.getElementById('modalStudentArea').value = s.area || '';
       document.getElementById('modalPaymentDate').value = s.paymentDate || '';
@@ -1628,6 +1650,7 @@
         s.key = child.key;
         if (!s.academicYear) s.academicYear = '2024-2025';
         if (!s.source) s.source = 'accounting';
+        if (s.entity === 'شقطري') s.entity = 'سقطري';
         if (!s.entity) s.entity = 'جهات أخرى';
         allStudents.push(s);
       });
@@ -1648,7 +1671,7 @@
       'الرقم': s.id,
       'الاسم': s.name,
       'الصف': s.class,
-      'الجهة': s.entity || 'جهات أخرى',
+      'الجهة': (s.entity === 'شقطري' ? 'سقطري' : s.entity) || 'جهات أخرى',
       'الهاتف': s.phone,
       'المنطقة': s.area,
       'التاريخ': s.paymentDate,
@@ -1703,18 +1726,20 @@
 
             if (!studentId || !name) return;
 
-            // التحقق من تكرار الطالب داخل نفس (السنة والفصل)
             const isDuplicate = allStudents.some(s => s.id === studentId && s.academicYear === academicYear && s.semester === semester);
             if (isDuplicate) {
               duplicateCount++;
               return;
             }
 
+            let ent = row['الجهة'] || row['entity'] || 'جهات أخرى';
+            if (ent === 'شقطري') ent = 'سقطري';
+
             const student = {
               id: studentId,
               name: name,
               class: row['الصف'] || row['class'] || '',
-              entity: row['الجهة'] || row['entity'] || 'جهات أخرى',
+              entity: ent,
               phone: row['الهاتف'] || row['phone'] || '',
               area: row['المنطقة'] || row['area'] || '',
               paymentDate: row['التاريخ'] || row['paymentDate'] || '',
@@ -1778,6 +1803,7 @@
       document.getElementById('login-section').classList.add('hidden');
       document.getElementById('dashboard-section').classList.remove('hidden');
       updateActionButtons();
+      migrateShoqotriToSoqotri();
       updateTable();
     }
   });
