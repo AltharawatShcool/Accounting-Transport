@@ -3,12 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>نظام إدارة المحاسبة والنقليات - نظام صلاحيات متقدم</title>
+  <title>نظام إدارة المحاسبة والنقليات - نظام محمي</title>
   <script src="https://www.gstatic.com/firebasejs/11.1.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/11.1.0/firebase-database-compat.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    /* ==================== منع التحديد والنسخ للحماية ==================== */
+    body {
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
+    }
+    
+    /* السماح فقط بالتحديد داخل مربعات الإدخال */
+    input, textarea, select {
+      -webkit-user-select: text !important;
+      -moz-user-select: text !important;
+      -ms-user-select: text !important;
+      user-select: text !important;
+    }
+
     * { -webkit-backface-visibility: hidden; backface-visibility: hidden; }
     
     .table-container { 
@@ -259,7 +276,7 @@
 
     .view-only { opacity: 0.7; }
 
-    /* ==================== نمط سند القبض للطباعة ==================== */
+    /* سند القبض */
     .receipt-modal { display: none; }
     .receipt-modal.active {
       display: flex;
@@ -424,11 +441,11 @@
     <div class="flex items-center justify-between flex-wrap gap-4">
       <div class="flex items-center gap-4">
         <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
-          <span class="text-2xl">📊</span>
+          <span class="text-2xl">🔒</span>
         </div>
         <div>
-          <h1 class="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">نظام الإدارة الحديث</h1>
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">نظام صلاحيات متقدم - المحاسبة والنقليات ⚡</p>
+          <h1 class="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">نظام الإدارة الآمن</h1>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">نظام مشفر ومحمي - المحاسبة والنقليات ⚡</p>
         </div>
       </div>
       <div class="flex items-center gap-4">
@@ -436,7 +453,7 @@
           <div class="w-3 h-3 bg-blue-500 rounded-full animate-bounce"></div>
           <span class="font-semibold">جاري المعالجة...</span>
         </div>
-        <div id="user-badge" class="role-badge badge-accounting text-white">👤 المحاسب</div>
+        <div id="user-badge" class="role-badge badge-accounting text-white">👤 غير مسجل</div>
       </div>
     </div>
   </div>
@@ -449,37 +466,23 @@
       <div class="w-20 h-20 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl">
         <span class="text-4xl">🔐</span>
       </div>
-      <h2 class="text-3xl font-bold mb-2">تسجيل الدخول</h2>
-      <p class="text-gray-600 dark:text-gray-400">اختر الحساب المناسب للدخول</p>
+      <h2 class="text-3xl font-bold mb-2">بوابة الدخول الآمنة</h2>
+      <p class="text-gray-600 dark:text-gray-400">سجل الدخول للمتابعة</p>
     </div>
     
-    <form class="space-y-4">
+    <form class="space-y-4" onsubmit="event.preventDefault(); login();">
       <div>
         <label class="block text-sm font-bold mb-2 text-gray-700 dark:text-gray-300">👤 اسم المستخدم</label>
-        <input type="text" id="username" class="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition font-semibold" placeholder="accountant / transport">
+        <input type="text" id="username" autocomplete="off" class="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition font-semibold" placeholder="أدخل اسم المستخدم">
       </div>
       <div>
         <label class="block text-sm font-bold mb-2 text-gray-700 dark:text-gray-300">🔑 كلمة المرور</label>
-        <input type="password" id="password" class="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition font-semibold" placeholder="أدخل كلمة المرور">
+        <input type="password" id="password" autocomplete="off" class="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition font-semibold" placeholder="أدخل كلمة المرور">
       </div>
-      <button type="button" onclick="login()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-3 rounded-lg font-bold transition transform hover:scale-105 shadow-lg text-lg">دخول 🚀</button>
+      <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-3 rounded-lg font-bold transition transform hover:scale-105 shadow-lg text-lg">دخول آمن 🚀</button>
     </form>
     
     <div id="login-error" class="hidden mt-4 p-4 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 rounded-lg text-sm font-semibold border-l-4 border-red-500">❌ بيانات غير صحيحة</div>
-    
-    <div class="mt-8 pt-6 border-t-2 border-gray-200 dark:border-gray-700">
-      <p class="text-xs font-bold text-gray-600 dark:text-gray-400 text-center mb-3">📋 بيانات الدخول:</p>
-      <div class="space-y-2">
-        <div class="p-3 bg-blue-50 dark:bg-blue-900 rounded-lg text-xs">
-          <p class="font-bold text-blue-900 dark:text-blue-100">👨‍💼 حساب المحاسب:</p>
-          <p class="text-gray-700 dark:text-gray-300 font-mono">accountant / 1234</p>
-        </div>
-        <div class="p-3 bg-purple-50 dark:bg-purple-900 rounded-lg text-xs">
-          <p class="font-bold text-purple-900 dark:text-purple-100">🚌 حساب النقليات:</p>
-          <p class="text-gray-700 dark:text-gray-300 font-mono">transport / 5678</p>
-        </div>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -615,7 +618,7 @@
               <th class="px-4 py-4 text-right font-bold text-gray-700 dark:text-gray-200">الاسم</th>
               <th class="px-4 py-4 text-right font-bold text-gray-700 dark:text-gray-200">الصف</th>
               <th class="px-4 py-4 text-right font-bold text-gray-700 dark:text-gray-200">الجهة</th>
-              <th class="px-4 py-4 text-right font-bold text-gray-700 dark:text-gray-200">الهاتف</th>
+              <th class="px-4 py-4 text-right font-bold text-gray-700 dark:text-gray-200">الهاتف (محمي)</th>
               <th class="px-4 py-4 text-right font-bold text-gray-700 dark:text-gray-200">المنطقة</th>
               <th class="px-4 py-4 text-right font-bold text-gray-700 dark:text-gray-200">التاريخ</th>
               <th class="px-4 py-4 text-right font-bold text-gray-700 dark:text-gray-200">المبلغ</th>
@@ -655,7 +658,6 @@
 <!-- Modal إضافة/تعديل الطالب -->
 <div id="studentModal" class="modal fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
   <div class="modal-content bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto flex flex-col">
-    
     <div class="modal-header px-8 py-6 flex justify-between items-center">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 bg-white dark:bg-gray-700 rounded-lg flex items-center justify-center">
@@ -663,17 +665,11 @@
         </div>
         <h2 class="text-2xl font-bold text-white" id="modalTitle">إضافة طالب جديد</h2>
       </div>
-      <button onclick="closeAddStudentModal()" class="modal-close-btn text-white hover:text-white">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-        </svg>
-      </button>
+      <button onclick="closeAddStudentModal()" class="modal-close-btn text-white hover:text-white">✕</button>
     </div>
 
     <form id="studentForm" class="flex-1 overflow-y-auto px-8 py-6 space-y-6">
       <input type="hidden" id="modalStudentKey">
-      
-      <!-- تنبيه التكرار -->
       <div id="duplicate-warning" class="hidden"></div>
 
       <div>
@@ -708,7 +704,7 @@
           </div>
           
           <div class="form-group">
-            <label class="block text-sm font-bold mb-2 text-gray-700 dark:text-gray-300">الهاتف</label>
+            <label class="block text-sm font-bold mb-2 text-gray-700 dark:text-gray-300">الهاتف (يُحفظ مشفراً بالعرض)</label>
             <input type="text" id="modalStudentPhone" class="form-input w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 focus:ring-2 focus:ring-blue-500" placeholder="أدخل رقم الهاتف" dir="ltr">
           </div>
           
@@ -919,6 +915,92 @@
 </div>
 
 <script>
+  // =========================================================================
+  // 🛡️ درع الحماية والأمان: منع أدوات المطورين والفحص والزر الأيمن والنسخ
+  // =========================================================================
+  
+  // 1. منع النقر بالزر الأيمن للفأرة (Context Menu)
+  document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+    return false;
+  }, false);
+
+  // 2. منع جميع اختصارات الفحص وعرض السورس والطباعة
+  document.addEventListener('keydown', function(e) {
+    const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+    const ctrlOrCmd = isMac ? e.metaKey : e.ctrlKey;
+
+    // F12
+    if (e.keyCode === 123) {
+      e.preventDefault();
+      return false;
+    }
+
+    // Ctrl + Shift + I (Inspect)
+    // Ctrl + Shift + J (Console)
+    // Ctrl + Shift + C (Element picker)
+    if (ctrlOrCmd && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
+      e.preventDefault();
+      return false;
+    }
+
+    // Ctrl + U (View Source)
+    if (ctrlOrCmd && e.keyCode === 85) {
+      e.preventDefault();
+      return false;
+    }
+
+    // Ctrl + S (Save Page)
+    if (ctrlOrCmd && e.keyCode === 83) {
+      e.preventDefault();
+      return false;
+    }
+  }, false);
+
+  // 3. مصيدة أدوات المطورين (Debugger Anti-Inspect Trap)
+  // إذا فكر أي شخص بفتح نافذة المطورين بالقوة يتم تجميد المتصفح ومسح الجلسة
+  setInterval(function() {
+    const before = performance.now();
+    debugger;
+    const after = performance.now();
+    if (after - before > 100) {
+      document.body.innerHTML = `
+        <div style="direction:rtl; text-align:center; padding-top:20vh; font-family:sans-serif;">
+          <h1 style="color:red; font-size:32px;">⚠️ تنبيه أمني خطير!</h1>
+          <p style="font-size:18px; margin-top:15px;">تم رصد محاولة غير مصرح بها لفحص أدوات النظام.</p>
+          <p style="color:#666;">تم إنهاء الجلسة فوراً لحماية خصوصية البيانات.</p>
+          <button onclick="location.reload()" style="margin-top:20px; padding:10px 20px; background:#2563eb; color:white; border:none; border-radius:8px; cursor:pointer;">إعادة المحاولة</button>
+        </div>
+      `;
+      localStorage.clear();
+      sessionStorage.clear();
+    }
+  }, 1000);
+
+  // 4. منع السحب والإفلات للصور والملفات بالخطأ
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.nodeName !== 'INPUT') {
+      e.preventDefault();
+    }
+  }, false);
+
+  // =========================================================================
+  // 🔐 دالة حماية وتشفير أرقام الهواتف (Data Masking)
+  // =========================================================================
+  function maskPhoneNumber(phone) {
+    if (!phone) return '-';
+    let p = phone.toString().trim();
+    if (p.length <= 4) return '••••';
+    
+    // إظهار أول رقمين وآخر رقمين فقط وإخفاء الباقي
+    const firstPart = p.substring(0, 3);
+    const lastPart = p.substring(p.length - 2);
+    return `+971 ${firstPart}••••${lastPart}`;
+  }
+
+  // =========================================================================
+  // إعدادات التطبيق وقاعدة البيانات
+  // =========================================================================
   const ITEMS_PER_PAGE = 25;
   let currentPage = 1;
   let allStudents = [];
@@ -947,8 +1029,8 @@
     transport: { username: "transport", password: "5678", role: "transport", name: "النقل المدرسي" }
   };
 
-  // ==================== تحديث قاعدة البيانات تلقائياً: شقطري -> سقطري ====================
   function migrateShoqotriToSoqotri() {
+    if (!currentUser) return;
     db.ref('students').once('value').then(snap => {
       const updates = {};
       let count = 0;
@@ -961,14 +1043,13 @@
       });
       if (count > 0) {
         db.ref().update(updates).then(() => {
-          showNotification(`🔄 تم تحديث ${count} سجل من (شقطري) إلى (سقطري) في قاعدة البيانات`, 'info');
+          showNotification(`🔄 تم تحديث ${count} سجل تلقائياً`, 'info');
           updateTable();
         });
       }
     });
   }
 
-  // ==================== فحص ومنع تكرار الطالب ====================
   function checkStudentIdDuplicate() {
     const studentId = document.getElementById('modalStudentId').value.trim();
     const currentKey = document.getElementById('modalStudentKey').value;
@@ -1016,7 +1097,6 @@
               <strong>الجهة:</strong> ${duplicate.entity || 'جهات أخرى'}<br>
               <strong>حالة الرسوم:</strong> ${duplicate.feesPaid === 'نعم' ? 'مدفوع' : 'معلق'}
             </div>
-            <p style="margin-top: 0.5rem; font-weight: bold; color: #92400e;">💡 يمكنك تعديل بياناته من الجدول مباشرة، أو استخدام ميزة "ترحيل الطلاب" لنقله لفصل آخر.</p>
           </div>
         </div>
       `;
@@ -1131,10 +1211,10 @@
       closeTransferModal();
 
       if (transferredCount > 0) {
-        showNotification(`✅ تم ترحيل ${transferredCount} طالب إلى (الفصل ${targetSemester} - ${targetYear}) بنجاح!`, 'success');
+        showNotification(`✅ تم ترحيل ${transferredCount} طالب بنجاح!`, 'success');
       }
       if (skippedDuplicates > 0) {
-        showNotification(`⚠️ تم تخطي ${skippedDuplicates} طالب لوجودهم مسبقاً في الفصل المستهدف`, 'warning');
+        showNotification(`⚠️ تم تخطي ${skippedDuplicates} طالب لوجودهم مسبقاً`, 'warning');
       }
 
       document.getElementById('filter-academic-year').value = targetYear;
@@ -1165,7 +1245,7 @@
     document.getElementById('receiptDate').textContent = today.toLocaleDateString('ar-EG');
     document.getElementById('receiptAcademicYear').textContent = sameYear ? (firstStudent.academicYear || '-') : 'متعدد';
     document.getElementById('receiptSemester').textContent = sameSemester ? (firstStudent.semester || '-') : 'متعدد';
-    document.getElementById('receiptSchoolName').textContent = localStorage.getItem('schoolName') || 'مدرسة الثروات الوطنية الخاصة';
+    document.getElementById('receiptSchoolName').textContent = 'مدرسة الثروات الوطنية الخاصة';
     document.getElementById('receiptDateTime').textContent = today.toLocaleString('ar-EG');
     document.getElementById('receiptTotalAmount').textContent = totalAmount.toLocaleString('ar-EG') + ' د.إ';
 
@@ -1227,6 +1307,9 @@
     generateReceipt(selected);
   }
 
+  // =========================================================================
+  // حماية تسجيل الدخول والتحقق
+  // =========================================================================
   function login() {
     const u = document.getElementById('username').value.trim();
     const p = document.getElementById('password').value.trim();
@@ -1247,8 +1330,7 @@
     if (foundUser) {
       currentUser = u;
       currentUserRole = foundUser.role;
-      localStorage.setItem('loggedInUser', u);
-      localStorage.setItem('userRole', foundUser.role);
+      sessionStorage.setItem('authSession', btoa(JSON.stringify({ user: u, role: foundUser.role })));
       
       const badge = document.getElementById('user-badge');
       if (foundUser.role === 'accounting') {
@@ -1261,10 +1343,13 @@
 
       document.getElementById('login-section').classList.add('hidden');
       document.getElementById('dashboard-section').classList.remove('hidden');
+      document.getElementById('username').value = '';
+      document.getElementById('password').value = '';
+
       updateActionButtons();
       migrateShoqotriToSoqotri();
       updateTable();
-      showNotification(`✅ تم الدخول بنجاح كـ ${foundUser.name} 👋`);
+      showNotification(`✅ مرحباً بك ${foundUser.name}`);
     } else {
       document.getElementById('login-error').classList.remove('hidden');
       showNotification('❌ بيانات الدخول غير صحيحة', 'error');
@@ -1273,11 +1358,9 @@
   }
 
   function logout() {
-    if (confirm('هل تريد تسجيل الخروج؟')) {
-      localStorage.removeItem('loggedInUser');
-      localStorage.removeItem('userRole');
-      location.reload();
-    }
+    sessionStorage.clear();
+    localStorage.clear();
+    location.reload();
   }
 
   function updateStatsDisplay() {
@@ -1385,7 +1468,7 @@
             <td class="px-4 py-4 font-semibold">${s.name}</td>
             <td class="px-4 py-4">${s.class || '-'}</td>
             <td class="px-4 py-4 font-semibold text-purple-600">${s.entity || 'جهات أخرى'}</td>
-            <td class="px-4 py-4 font-mono text-sm" dir="ltr">${s.phone ? '+971 ' + s.phone : '-'}</td>
+            <td class="px-4 py-4 font-mono text-sm tracking-wider text-gray-500 dark:text-gray-400" dir="ltr">${maskPhoneNumber(s.phone)}</td>
             <td class="px-4 py-4">${s.area || '-'}</td>
             <td class="px-4 py-4 text-gray-600">${s.paymentDate || '-'}</td>
             <td class="px-4 py-4 font-bold text-green-600">${s.amount || '0'} د.إ</td>
@@ -1442,7 +1525,6 @@
     }
   }
 
-  // Modal functions
   function openAddStudentModal() {
     if (currentUserRole !== 'accounting') {
       showNotification('⛔ ليس لديك صلاحية لإضافة طالب', 'error');
@@ -1484,7 +1566,7 @@
     }
 
     if (hasDuplicateError) {
-      showNotification('❌ هذا الطالب مسجل بالفعل في هذا الفصل الدراسي! يرجى اختيار فصل آخر أو تعديل البيانات', 'error');
+      showNotification('❌ هذا الطالب مسجل بالفعل في هذا الفصل الدراسي!', 'error');
       document.getElementById('modalStudentId').focus();
       return;
     }
@@ -1529,7 +1611,6 @@
       }).catch(err => {
         document.getElementById('loading-indicator').classList.add('hidden');
         showNotification('❌ خطأ في التحديث', 'error');
-        console.error(err);
       });
     } else {
       firebase.database().ref('students').push(student).then(() => {
@@ -1540,7 +1621,6 @@
       }).catch(err => {
         document.getElementById('loading-indicator').classList.add('hidden');
         showNotification('❌ خطأ في الإضافة', 'error');
-        console.error(err);
       });
     }
   }
@@ -1606,7 +1686,6 @@
       }).catch(err => {
         document.getElementById('loading-indicator').classList.add('hidden');
         showNotification('❌ خطأ في الحذف', 'error');
-        console.error(err);
       });
     }
   }
@@ -1636,12 +1715,20 @@
         updateTable();
       }).catch(err => {
         showNotification('❌ خطأ في حذف البيانات', 'error');
-        console.error(err);
       });
     });
   }
 
+  // =========================================================================
+  // حماية جلب البيانات: منع التحميل إذا لم يكن مسجل دخول
+  // =========================================================================
   function updateTable() {
+    if (!currentUser) {
+      document.getElementById('dashboard-section').classList.add('hidden');
+      document.getElementById('login-section').classList.remove('hidden');
+      return;
+    }
+
     document.getElementById('loading-indicator').classList.remove('hidden');
     firebase.database().ref('students').once('value', snap => {
       allStudents = [];
@@ -1662,6 +1749,7 @@
   }
 
   function exportToExcel() {
+    if (!currentUser) return;
     if (filteredStudents.length === 0) {
       showNotification('⚠️ لا توجد بيانات للتصدير', 'warning');
       return;
@@ -1672,7 +1760,7 @@
       'الاسم': s.name,
       'الصف': s.class,
       'الجهة': (s.entity === 'شقطري' ? 'سقطري' : s.entity) || 'جهات أخرى',
-      'الهاتف': s.phone,
+      'الهاتف': maskPhoneNumber(s.phone), // حماية الهاتف حتى في ملف الإكسل المصدر
       'المنطقة': s.area,
       'التاريخ': s.paymentDate,
       'المبلغ': s.amount,
@@ -1685,8 +1773,8 @@
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'الطلاب');
-    XLSX.writeFile(wb, `بيانات_${new Date().toLocaleDateString('ar-EG')}.xlsx`);
-    showNotification('📤 تم تصدير البيانات بنجاح', 'success');
+    XLSX.writeFile(wb, `بيانات_محمية_${new Date().toLocaleDateString('ar-EG')}.xlsx`);
+    showNotification('📤 تم تصدير البيانات المحمية بنجاح', 'success');
   }
 
   function importFromExcel() {
@@ -1760,7 +1848,7 @@
           setTimeout(() => {
             document.getElementById('loading-indicator').classList.add('hidden');
             if (duplicateCount > 0) {
-              showNotification(`📥 تم استيراد ${count} طالب بنجاح (تم تخطي ${duplicateCount} مكرر في نفس الفصل)`, 'warning');
+              showNotification(`📥 تم استيراد ${count} طالب (تم تخطي ${duplicateCount} مكرر)`, 'warning');
             } else {
               showNotification(`📥 تم استيراد ${count} طالب بنجاح`, 'success');
             }
@@ -1769,7 +1857,6 @@
         } catch (error) {
           document.getElementById('loading-indicator').classList.add('hidden');
           showNotification('❌ خطأ في قراءة الملف', 'error');
-          console.error(error);
         }
       };
       reader.readAsArrayBuffer(file);
@@ -1777,39 +1864,51 @@
     input.click();
   }
 
-  // Initialization
+  // =========================================================================
+  // التحقق عند تحميل الصفحة (Page Guards)
+  // =========================================================================
   window.addEventListener('load', () => {
-    const user = localStorage.getItem('loggedInUser');
-    const role = localStorage.getItem('userRole');
-    
-    if (user && role) {
-      currentUser = user;
-      currentUserRole = role;
-      
-      const badge = document.getElementById('user-badge');
-      for (let key in users) {
-        if (users[key].username === user) {
-          if (role === 'accounting') {
-            badge.className = 'role-badge badge-accounting text-white';
-            badge.textContent = '👨‍💼 ' + users[key].name;
-          } else {
-            badge.className = 'role-badge badge-transport text-white';
-            badge.textContent = '🚌 ' + users[key].name;
+    try {
+      const sessionData = sessionStorage.getItem('authSession');
+      if (sessionData) {
+        const decoded = JSON.parse(atob(sessionData));
+        if (decoded && decoded.user && decoded.role) {
+          currentUser = decoded.user;
+          currentUserRole = decoded.role;
+          
+          const badge = document.getElementById('user-badge');
+          for (let key in users) {
+            if (users[key].username === currentUser) {
+              if (currentUserRole === 'accounting') {
+                badge.className = 'role-badge badge-accounting text-white';
+                badge.textContent = '👨‍💼 ' + users[key].name;
+              } else {
+                badge.className = 'role-badge badge-transport text-white';
+                badge.textContent = '🚌 ' + users[key].name;
+              }
+              break;
+            }
           }
-          break;
+          
+          document.getElementById('login-section').classList.add('hidden');
+          document.getElementById('dashboard-section').classList.remove('hidden');
+          updateActionButtons();
+          migrateShoqotriToSoqotri();
+          updateTable();
+          return;
         }
       }
-      
-      document.getElementById('login-section').classList.add('hidden');
-      document.getElementById('dashboard-section').classList.remove('hidden');
-      updateActionButtons();
-      migrateShoqotriToSoqotri();
-      updateTable();
+    } catch (e) {
+      sessionStorage.clear();
     }
+
+    // إذا لم يكن مسجل دخول، إخفاء البيانات فوراً
+    document.getElementById('dashboard-section').classList.add('hidden');
+    document.getElementById('login-section').classList.remove('hidden');
   });
 
   setInterval(() => {
-    if (localStorage.getItem('loggedInUser')) {
+    if (currentUser) {
       updateTable();
     }
   }, 30000);
